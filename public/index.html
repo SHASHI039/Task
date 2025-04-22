@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Form</title>
+</head>
+<body>
+  <h2>Add New User</h2>
+  <form id="userForm">
+    <input type="text" id="firstName" placeholder="First Name" required><br><br>
+    <input type="text" id="lastName" placeholder="Last Name" required><br><br>
+    <input type="email" id="email" placeholder="Email" required><br><br>
+    <input type="text" id="phone" placeholder="Phone" required><br><br>
+    <input type="text" id="address" placeholder="Address" required><br><br>
+    <input type="text" id="city" placeholder="City" required><br><br>
+    <input type="text" id="state" placeholder="State" required><br><br>
+    <input type="text" id="country" placeholder="Country" required><br><br>
+    <button type="submit">Submit</button>
+  </form>
+
+  <h2>All Users</h2>
+  <div id="usersList"></div>
+
+  <script>
+    const form = document.getElementById('userForm');
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const user = {
+        firstName: document.getElementById('firstName').value,
+        lastName: document.getElementById('lastName').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        address: document.getElementById('address').value,
+        city: document.getElementById('city').value,
+        state: document.getElementById('state').value,
+        country: document.getElementById('country').value
+      };
+
+      fetch('/user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(user)
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert('User added!');
+        form.reset();
+        loadUsers();
+      });
+    });
+
+    function loadUsers() {
+      fetch('/user')
+        .then(res => res.json())
+        .then(users => {
+          const list = document.getElementById('usersList');
+          list.innerHTML = '';
+          users.forEach(user => {
+            list.innerHTML += `
+              <p>
+                <b>${user.firstName} ${user.lastName}</b><br>
+                Email: ${user.email}<br>
+                Phone: ${user.phone}<br>
+                Address: ${user.address}, ${user.city}, ${user.state}, ${user.country}
+              </p>
+            `;
+          });
+        });
+    }
+
+    loadUsers();
+  </script>
+</body>
+</html>
